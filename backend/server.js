@@ -9,18 +9,18 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 import cors from "cors";
+import errorMiddleware from "./middlewares/errors.middleware.js";
 
-dotenv.config();
 const app = express();
 const ai = new GoogleGenAI(process.env.GEMINI_API_KEY);
-//ELEVEN_LABS_VOICE_ID="Password" ADD TO .env WHEN DONE
+dotenv.config();
 
 app.use(express.json());
 app.use(cors());
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRouter);
-
+app.use(errorMiddleware);
 
 app.get('/', (req, res) => {
     res.send('Welcome to the Speak Spark!');
