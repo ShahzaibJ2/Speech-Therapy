@@ -7,9 +7,11 @@ import userRouter from './routes/user.routes.js';
 import authRouter from "./routes/auth.routes.js";
 import cors from "cors";
 import middleware from "./middlewares/errors.middleware.js";
-
+import cors from "cors";
+import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js';
 const app = express();
 const ai = new GoogleGenAI(process.env.GEMINI_API_KEY);
+
 dotenv.config();
 
 //ELEVEN_LABS_VOICE_ID="Password" ADD TO .env WHEN DONE
