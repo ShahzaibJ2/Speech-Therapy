@@ -8,7 +8,7 @@ elevenlabs = ElevenLabs(
   api_key=os.getenv("ELEVEN_LABS_API_KEY"),
 )
 audio = elevenlabs.text_to_speech.convert(
-    text="Hi Gus",
+    text="Hi Kevin, if you were younger Id give you a kiss.",
     voice_id="JBFqnCBsd6RMkjVDRZzb",
     model_id="eleven_multilingual_v2",
     output_format="mp3_44100_128",
