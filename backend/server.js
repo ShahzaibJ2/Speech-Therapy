@@ -42,16 +42,13 @@ async function main(fileInput) {
     model: "gemini-2.5-flash",
     contents: createUserContent([
       createPartFromUri(myfile.uri, myfile.mimeType),
-      "Transcribe this audio clip and find the mispronounced words. I need you to create an arrays called wordsCorrectlyProunounced that will store the words that were incorrectly pronounced and provide an enunciation of the words in paranthesis next to the correct word. So something like 'apple'('ah-puh-le'",
+      "Please provide an array named wordList with the correct prnounciations of any words that were mispronounced in the audio file. Format the response as a javascript array inside a markdown code block. For example: ```javascript [ 'word1', 'word2' ] ```",
     ]),
   });
 
-  const filtering = response.text.match(/```javascript([\s\S]*?)```/);
-  const correctPronouncation = filtering[1].trim();
-  return correctPronouncation;
 }
 
-const correctPronouncation = await main("Recording (3).m4a");
+const correctPronouncation = await main("/Users/shahzaibjahangir/Documents/GitHub/Speech-Therapy/Queens College.mp3");
 console.log(correctPronouncation);
 
 export default app;
