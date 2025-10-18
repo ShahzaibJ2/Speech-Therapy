@@ -2,13 +2,13 @@ import dotenv from "dotenv";
 import express from "express";
 import { PORT } from './config/env.js';
 import { connectDB } from "./config/db.js";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, createUserContent,createPartFromUri } from "@google/genai";
 import userRouter from './routes/user.routes.js';
 import authRouter from "./routes/auth.routes.js";
-import multer from "multer";  
 import fs from "fs";
 import path from "path";
 import cors from "cors";
+import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js';
 
 dotenv.config();
 const app = express();
@@ -31,62 +31,26 @@ app.listen(PORT, async () => {
 
 // Gemini API
 async function main() {
-const response = await ai.models.generateContent({
+  const myfile = await ai.files.upload({
+    file: "/Users/shahzaibjahangir/Documents/GitHub/Speech-Therapy/Queens-College.mp3",
+    config: { mimeType: "audio/mpeg" },
+  });
+
+  const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
-    contents: "Explain how AI works in a few words",
+    contents: createUserContent([
+      createPartFromUri(myfile.uri, myfile.mimeType),
+      "Transcribe this audio clip",
+    ]),
   });
   console.log(response.text);
 }
-main();
+await main();
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadPath = "./uploads";
-    if (!fs.existsSync(uploadPath)){ 
-      fs.mkdirSync(uploadPath);}
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}${path.extname(file.originalname)}`);//a unique filename
-  },
-});
-const upload = multer({ storage: storage });
-
-// Transcription function using Gemini API
-async function transcribeAudio(audioPath) {
-  try{
-    const audioData = fs.readFileSync(audioPath);
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: `Transcribe the following audio file: ${audioData.toString('base64')}`,
-    });
-  return response.text || "Transcription failed";
-  }
-  catch (error) {
-    console.error("Error during transcription:", error);
-    return null;
-  }
-}
-
-app.post("/upload", upload.single("audio"), async (req, res) => {
-  try {
-    const audioPath = req.file.path;
-    console.log("Audio uploaded:", audioPath);
-    const transcript = await transcribeAudio(audioPath); // Call the transcription function, get script
-
-    res.json({ message: "Audio uploaded and transcribed!", transcript });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Audio processing failed" });
-  }
+const elevenlabs = new ElevenLabsClient({
+  apiKey: process.env.ELEVEN_LABS_API_KEY,
 });
 
-// async function findMispronunciations(transcript) {
-//   try{
 
-//   }
-// }
 
-const testAudio = "/Users/shahzaibjahangir/Documents/GitHub/Speech-Therapy/Queens-College.mp3"
-transcribeAudio(testAudio)
 export default app;
