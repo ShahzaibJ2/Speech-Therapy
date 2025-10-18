@@ -82,4 +82,5 @@ app.post("/upload", upload.single("audio"), async (req, res) => {
     res.status(500).json({ error: "Audio processing failed" });
   }
 });
+console.log("Server is running and ready to accept requests.");
 export default app;
