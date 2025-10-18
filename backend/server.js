@@ -14,13 +14,10 @@ dotenv.config();
 const app = express();
 const ai = new GoogleGenAI(process.env.GEMINI_API_KEY);
 //ELEVEN_LABS_VOICE_ID="Password" ADD TO .env WHEN DONE
-
 app.use(express.json());
 app.use(cors());
-
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRouter);
-
 
 app.get('/', (req, res) => {
     res.send('Welcome to the Speak Spark!');
@@ -55,6 +52,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+// Transcription function using Gemini API
 async function transcribeAudio(audioPath) {
   try{
     const audioData = fs.readFileSync(audioPath);
@@ -82,5 +80,13 @@ app.post("/upload", upload.single("audio"), async (req, res) => {
     res.status(500).json({ error: "Audio processing failed" });
   }
 });
-console.log("Server is running and ready to accept requests.");
+
+// async function findMispronunciations(transcript) {
+//   try{
+
+//   }
+// }
+
+const testAudio = "/Users/shahzaibjahangir/Documents/GitHub/Speech-Therapy/Queens-College.mp3"
+transcribeAudio(testAudio)
 export default app;
