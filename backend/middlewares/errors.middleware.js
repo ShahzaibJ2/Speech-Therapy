@@ -33,4 +33,4 @@ const middleware = (err, req, res, next) => {
 };
 // Create a user --> middleware (check for status) --> middleware (check for errors) --> next --> controller
 
-export default errorMiddleware;
+export default middleware;
