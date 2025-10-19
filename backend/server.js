@@ -7,14 +7,13 @@ import userRouter from './routes/user.routes.js';
 import authRouter from "./routes/auth.routes.js";
 import cors from "cors";
 import middleware from "./middlewares/errors.middleware.js";
-import cors from "cors";
 import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js';
-const app = express();
-const ai = new GoogleGenAI(process.env.GEMINI_API_KEY);
 
 dotenv.config();
 
-//ELEVEN_LABS_VOICE_ID="Password" ADD TO .env WHEN DONE
+const app = express();
+const ai = new GoogleGenAI(process.env.GEMINI_API_KEY);
+
 app.use(express.json());
 app.use(cors());
 
@@ -23,7 +22,7 @@ app.use('/api/v1/users', userRouter);
 app.use(middleware);
 
 app.get('/', (req, res) => {
-    res.send('Welcome to the Speak Spark!');
+  res.send('Welcome to the Speak Spark!');
 });
 
 // Connecting DB
@@ -42,13 +41,14 @@ async function main(fileInput) {
     model: "gemini-2.5-flash",
     contents: createUserContent([
       createPartFromUri(myfile.uri, myfile.mimeType),
-      "Please provide an array named wordList with the correct prnounciations of any words that were mispronounced in the audio file. Format the response as a javascript array inside a markdown code block. For example: ```javascript [ 'word1', 'word2' ] ```",
+      "Please provide an array named wordList with the correct pronunciations of any words that were mispronounced in the audio file. Format the response as a javascript array inside a markdown code block. For example:\n```javascript [ 'word1', 'word2' ]```",
     ]),
   });
 
+  return response; // or do further processing here
 }
 
-const correctPronouncation = await main("/Users/shahzaibjahangir/Documents/GitHub/Speech-Therapy/Queens College.mp3");
-console.log(correctPronouncation);
+const correctPronunciation = await main("/Users/shahzaibjahangir/Documents/GitHub/Speech-Therapy/testWithMistakes.mp3");
+console.log(correctPronunciation);
 
 export default app;
